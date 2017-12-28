@@ -1,4 +1,4 @@
-package client;
+package clientA;
 
 import message.Message;
 
