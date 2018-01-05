@@ -3,11 +3,10 @@ package service;
 import clientA.Client;
 import message.Message;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class RaceResultService {
-    private List<Client> clients = new ArrayList<>();
+    private Collection<Client> clients = new HashSet<>();
 
     public void addSubscriber(Client client) {
         clients.add(client);

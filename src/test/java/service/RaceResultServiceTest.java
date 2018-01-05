@@ -49,4 +49,13 @@ public class RaceResultServiceTest {
         verify(clientA).receive(message);
         verify(clientB).receive(message);
     }
+
+    @Test
+    public void shouldSendOnlyOneMessageToClientsSubscribedMultipleTimes() {
+        raceResults.addSubscriber(clientA);
+        raceResults.addSubscriber(clientA);
+        raceResults.send(message);
+
+        verify(clientA).receive(message);
+    }
 }
