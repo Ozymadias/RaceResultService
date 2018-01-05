@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class RaceResultServiceTest {
@@ -21,6 +22,14 @@ public class RaceResultServiceTest {
         clientA = mock(Client.class);
         clientB = mock(Client.class);
         message = mock(Message.class);
+    }
+
+    @Test
+    public void notSubscribedClientShouldNotReceiveMessages() {
+        raceResults.send(message);
+
+        verify(clientA, never()).receive(message);
+        verify(clientB, never()).receive(message);
     }
 
     @Test
