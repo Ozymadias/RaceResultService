@@ -24,7 +24,7 @@ public class RaceResultServiceTest {
         clientA = mock(Client.class);
         clientB = mock(Client.class);
         message = mock(Message.class);
-        when(message.getType()).thenReturn(Category.ALL);
+        when(message.getType()).thenReturn(Category.BOAT_RACES);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class RaceResultServiceTest {
     @Test
     public void unsubscribedClientShouldNotReceiveMessages() {
         raceResults.subscribeAll(clientA);
-        raceResults.unsubscribe(clientA);
+        raceResults.unsubscribeForAll(clientA);
         raceResults.send(message);
 
         verify(clientA, never()).notify(message);
@@ -73,7 +73,7 @@ public class RaceResultServiceTest {
 
     @Test
     public void whenNotSubscribeClientTriesToUnsubscribeNothingShouldHappen() {
-        raceResults.unsubscribe(clientA);
+        raceResults.unsubscribeForAll(clientA);
     }
 
     @Test
@@ -125,5 +125,17 @@ public class RaceResultServiceTest {
         raceResults.send(horseRaceMessage);
 
         verify(clientA).notify(horseRaceMessage);
+    }
+
+    @Test
+    public void whenOneIsUnsubscribedForSomeCategoryShouldNotReceivedThatCategoryMessages() {
+        Message horseRaceMessage = mock(Message.class);
+        when(horseRaceMessage.getType()).thenReturn(Category.HOURS_RACES);
+        raceResults.subscribeAll(clientA);
+        raceResults.unsubscribe(clientA, Category.HOURS_RACES);
+
+        raceResults.send(horseRaceMessage);
+
+        verify(clientA, never()).notify(horseRaceMessage);
     }
 }

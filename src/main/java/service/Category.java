@@ -1,5 +1,5 @@
 package service;
 
 public enum Category {
-    ALL, F1_RACES, HOURS_RACES
+    BOAT_RACES, F1_RACES, HOURS_RACES
 }

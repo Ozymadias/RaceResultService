@@ -27,8 +27,11 @@ class RaceResultService {
         logger.info(message.toString());
     }
 
-    void unsubscribe(Client client) {
-        Category category = Category.ALL;
+    void unsubscribeForAll(Client client) {
+        Arrays.stream(Category.values()).forEach(cat -> unsubscribe(client, cat));
+    }
+
+    void unsubscribe(Client client, Category category) {
         HashSet<Client> clientsOfCategory = clients.getOrDefault(category, new HashSet<>());
         clientsOfCategory.remove(client);
         clients.put(category, clientsOfCategory);
