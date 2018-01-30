@@ -17,7 +17,7 @@ class RaceResultService {
             client.receive(message);
     }
 
-    void removeSubscriber(Client clientA) {
+    void unsubscribe(Client clientA) {
         clients.remove(clientA);
     }
 }
