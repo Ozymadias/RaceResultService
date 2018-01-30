@@ -24,6 +24,7 @@ public class RaceResultServiceTest {
         clientA = mock(Client.class);
         clientB = mock(Client.class);
         message = mock(Message.class);
+        when(message.getType()).thenReturn(Category.ALL);
     }
 
     @Test
@@ -90,5 +91,16 @@ public class RaceResultServiceTest {
         raceResults.send(message);
 
         verify(logger).info(message.toString());
+    }
+
+    @Test
+    public void whenMessageOfSomeCategoryIsSendShouldBeReceivedByThisWhoSubscribeForThatCategory() {
+        Message horseRaceMessage = mock(Message.class);
+        when(horseRaceMessage.getType()).thenReturn(Category.HOURS_RACES);
+        raceResults.subscribe(clientA, Category.HOURS_RACES);
+
+        raceResults.send(horseRaceMessage);
+
+        verify(clientA).notify(horseRaceMessage);
     }
 }
