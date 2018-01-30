@@ -3,21 +3,22 @@ package service;
 import clientA.Client;
 import message.Message;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Logger;
 
 class RaceResultService {
-    private Map<Category, HashSet<Client>> clients = new HashMap<>();
+    private Map<Category, HashSet<Client>> clients = new EnumMap<>(Category.class);
     private Logger logger;
 
     RaceResultService(Logger logger) {
         this.logger = logger;
     }
 
-    void subscribe(Client client) {
-        subscribe(client, Category.ALL);
+    void subscribeAll(Client client) {
+        Arrays.stream(Category.values()).forEach(cat -> subscribe(client, cat));
     }
 
     void send(Message message) {
