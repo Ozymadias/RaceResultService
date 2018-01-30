@@ -3,5 +3,5 @@ package clientA;
 import message.Message;
 
 public interface Client {
-    void receive(Message message);
+    void notify(Message message);
 }

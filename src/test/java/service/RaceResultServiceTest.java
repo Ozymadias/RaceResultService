@@ -5,6 +5,8 @@ import message.Message;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.logging.Logger;
+
 import static org.mockito.Mockito.*;
 
 public class RaceResultServiceTest {
@@ -13,10 +15,12 @@ public class RaceResultServiceTest {
     private Client clientA;
     private Client clientB;
     private Message message;
+    private Logger logger;
 
     @BeforeMethod
     private void setUp() {
-        raceResults = new RaceResultService();
+        logger = mock(Logger.class);
+        raceResults = new RaceResultService(logger);
         clientA = mock(Client.class);
         clientB = mock(Client.class);
         message = mock(Message.class);
@@ -26,8 +30,8 @@ public class RaceResultServiceTest {
     public void notSubscribedClientShouldNotReceiveMessages() {
         raceResults.send(message);
 
-        verify(clientA, never()).receive(message);
-        verify(clientB, never()).receive(message);
+        verify(clientA, never()).notify(message);
+        verify(clientB, never()).notify(message);
     }
 
     @Test
@@ -35,7 +39,7 @@ public class RaceResultServiceTest {
         raceResults.subscribe(clientA);
         raceResults.send(message);
 
-        verify(clientA).receive(message);
+        verify(clientA).notify(message);
     }
 
     @Test
@@ -44,8 +48,8 @@ public class RaceResultServiceTest {
         raceResults.subscribe(clientB);
         raceResults.send(message);
 
-        verify(clientA).receive(message);
-        verify(clientB).receive(message);
+        verify(clientA).notify(message);
+        verify(clientB).notify(message);
     }
 
     @Test
@@ -54,7 +58,7 @@ public class RaceResultServiceTest {
         raceResults.subscribe(clientA);
         raceResults.send(message);
 
-        verify(clientA).receive(message);
+        verify(clientA).notify(message);
     }
 
     @Test
@@ -63,7 +67,7 @@ public class RaceResultServiceTest {
         raceResults.unsubscribe(clientA);
         raceResults.send(message);
 
-        verify(clientA, never()).receive(message);
+        verify(clientA, never()).notify(message);
     }
 
     @Test
@@ -78,6 +82,13 @@ public class RaceResultServiceTest {
         raceResults.send(message);
         raceResults.send(message);
 
-        verify(clientA, times(2)).receive(message);
+        verify(clientA, times(2)).notify(message);
+    }
+
+    @Test
+    public void whenMessageIsSendShouldBeLogged() {
+        raceResults.send(message);
+
+        verify(logger).info(message.toString());
     }
 }
