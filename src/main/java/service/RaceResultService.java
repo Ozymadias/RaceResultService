@@ -8,7 +8,7 @@ import java.util.*;
 class RaceResultService {
     private Collection<Client> clients = new HashSet<>();
 
-    void addSubscriber(Client client) {
+    void subscribe(Client client) {
         clients.add(client);
     }
 

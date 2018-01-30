@@ -5,9 +5,7 @@ import message.Message;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class RaceResultServiceTest {
 
@@ -34,7 +32,7 @@ public class RaceResultServiceTest {
 
     @Test
     public void subscribedClientShouldReceivedMessage() {
-        raceResults.addSubscriber(clientA);
+        raceResults.subscribe(clientA);
         raceResults.send(message);
 
         verify(clientA).receive(message);
@@ -42,8 +40,8 @@ public class RaceResultServiceTest {
 
     @Test
     public void subscribedClientShouldBeSendToAllSubscribedClients() {
-        raceResults.addSubscriber(clientA);
-        raceResults.addSubscriber(clientB);
+        raceResults.subscribe(clientA);
+        raceResults.subscribe(clientB);
         raceResults.send(message);
 
         verify(clientA).receive(message);
@@ -52,8 +50,8 @@ public class RaceResultServiceTest {
 
     @Test
     public void shouldSendOnlyOneMessageToClientsSubscribedMultipleTimes() {
-        raceResults.addSubscriber(clientA);
-        raceResults.addSubscriber(clientA);
+        raceResults.subscribe(clientA);
+        raceResults.subscribe(clientA);
         raceResults.send(message);
 
         verify(clientA).receive(message);
@@ -61,7 +59,7 @@ public class RaceResultServiceTest {
 
     @Test
     public void unsubscribedClientShouldNotReceiveMessages() {
-        raceResults.addSubscriber(clientA);
+        raceResults.subscribe(clientA);
         raceResults.unsubscribe(clientA);
         raceResults.send(message);
 
@@ -71,5 +69,15 @@ public class RaceResultServiceTest {
     @Test
     public void whenNotSubscribeClientTriesToUnsubscribeNothingShouldHappen() {
         raceResults.unsubscribe(clientA);
+    }
+
+    @Test
+    public void whenTwoMessagesAreSendTwoMessagesShouldBeDelivered() {
+        raceResults.subscribe(clientA);
+
+        raceResults.send(message);
+        raceResults.send(message);
+
+        verify(clientA, times(2)).receive(message);
     }
 }
