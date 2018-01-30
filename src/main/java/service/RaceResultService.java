@@ -17,7 +17,7 @@ class RaceResultService {
         this.logger = logger;
     }
 
-    void subscribeAll(Client client) {
+    void subscribeForAll(Client client) {
         Arrays.stream(Category.values()).forEach(cat -> subscribe(client, cat));
     }
 

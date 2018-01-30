@@ -37,7 +37,7 @@ public class RaceResultServiceTest {
 
     @Test
     public void subscribedClientShouldReceivedMessage() {
-        raceResults.subscribeAll(clientA);
+        raceResults.subscribeForAll(clientA);
         raceResults.send(message);
 
         verify(clientA).notify(message);
@@ -45,8 +45,8 @@ public class RaceResultServiceTest {
 
     @Test
     public void subscribedClientShouldBeSendToAllSubscribedClients() {
-        raceResults.subscribeAll(clientA);
-        raceResults.subscribeAll(clientB);
+        raceResults.subscribeForAll(clientA);
+        raceResults.subscribeForAll(clientB);
         raceResults.send(message);
 
         verify(clientA).notify(message);
@@ -55,8 +55,8 @@ public class RaceResultServiceTest {
 
     @Test
     public void shouldSendOnlyOneMessageToClientsSubscribedMultipleTimes() {
-        raceResults.subscribeAll(clientA);
-        raceResults.subscribeAll(clientA);
+        raceResults.subscribeForAll(clientA);
+        raceResults.subscribeForAll(clientA);
         raceResults.send(message);
 
         verify(clientA).notify(message);
@@ -64,7 +64,7 @@ public class RaceResultServiceTest {
 
     @Test
     public void unsubscribedClientShouldNotReceiveMessages() {
-        raceResults.subscribeAll(clientA);
+        raceResults.subscribeForAll(clientA);
         raceResults.unsubscribeForAll(clientA);
         raceResults.send(message);
 
@@ -78,7 +78,7 @@ public class RaceResultServiceTest {
 
     @Test
     public void whenTwoMessagesAreSendTwoMessagesShouldBeDelivered() {
-        raceResults.subscribeAll(clientA);
+        raceResults.subscribeForAll(clientA);
 
         raceResults.send(message);
         raceResults.send(message);
@@ -120,7 +120,7 @@ public class RaceResultServiceTest {
     public void whenMessageOfSomeCategoryIsSendShouldNotBeReceivedByThisWhoSubscribedForAllCategories() {
         Message horseRaceMessage = mock(Message.class);
         when(horseRaceMessage.getType()).thenReturn(Category.HOURS_RACES);
-        raceResults.subscribeAll(clientA);
+        raceResults.subscribeForAll(clientA);
 
         raceResults.send(horseRaceMessage);
 
@@ -131,11 +131,23 @@ public class RaceResultServiceTest {
     public void whenOneIsUnsubscribedForSomeCategoryShouldNotReceivedThatCategoryMessages() {
         Message horseRaceMessage = mock(Message.class);
         when(horseRaceMessage.getType()).thenReturn(Category.HOURS_RACES);
-        raceResults.subscribeAll(clientA);
+        raceResults.subscribeForAll(clientA);
         raceResults.unsubscribe(clientA, Category.HOURS_RACES);
 
         raceResults.send(horseRaceMessage);
 
         verify(clientA, never()).notify(horseRaceMessage);
+    }
+
+    @Test
+    public void whenOneIsSubscribedForAllAndForSomeCategoryShouldReceivedOneThatCategoryMessage() {
+        Message horseRaceMessage = mock(Message.class);
+        when(horseRaceMessage.getType()).thenReturn(Category.HOURS_RACES);
+        raceResults.subscribeForAll(clientA);
+        raceResults.subscribe(clientA, Category.HOURS_RACES);
+
+        raceResults.send(horseRaceMessage);
+
+        verify(clientA).notify(horseRaceMessage);
     }
 }
